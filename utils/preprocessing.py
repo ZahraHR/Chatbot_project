@@ -101,4 +101,3 @@ class spacy_preprocessor:
         if self.remove_unwanted_tokens:
             tokens = [token for token in tokens if not (token.is_punct or token.is_space or token.is_quote or token.is_bracket or token.is_currency)]
         return tokens
-
