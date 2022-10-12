@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class Chatbot_Dataset(Dataset):
-    """Face Landmarks dataset."""
+    """Chatbot dataset."""
 
     def __init__(self, X_train,y_train):
         """
