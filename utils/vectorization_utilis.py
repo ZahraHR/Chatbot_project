@@ -2,27 +2,41 @@ from .preprocessing import spacy_preprocessor
 from typing import Union, List,Dict,Tuple
 import json
 import numpy as np
+from pathlib import Path
 
-#preprocessor = spacy_preprocessor()
-def generate_X_train_Y_train(preprocessor:spacy_preprocessor,json_path:Union[int, str]) -> Tuple:
+dict_labels={'greeting': 0,
+             'goodbye': 1,
+             'thanks': 2,
+             'hours': 3,
+             'mopeds': 4,
+             'payments': 5,
+             'opentoday': 6,
+             'rental': 7,
+             'today': 8}
+def generate_X_train_Y_train(preprocessor:spacy_preprocessor,json_path:Union[Path, str]) -> Tuple:
     f = open(json_path)
     intents = json.load(f)
 
     wordlist = []
-    all_data = []
+    X_data = []
+    tags=[]
 
     for intent in intents["intents"]:
         for pattern in intent["patterns"]:
             pattern = preprocessor.preprocess(pattern)
             if not (pattern == ['']):
                 wordlist.extend(pattern)
-                all_data.append((pattern, intent['tag']))
+                X_data.append(pattern)
+                tags.append(intent['tag'])
+
     wordlist = unique(wordlist)
+    X_train = np.array([compute_bag_words_sentence(wordlist, pattern) for pattern in X_data])
+    Y_train = np.array([dict_labels[tag] for tag in tags])
 
-    X_train = np.array([compute_bag_words_sentence(wordlist, pattern) for (pattern, tag) in all_data])
-    Y_train = np.array([tag for (pattern, tag) in all_data])
+    return (X_train, Y_train, wordlist)
 
-    return(X_train,Y_train)
+
+
 def unique(list: List) -> List:
     unique_list = []
     for element in list:
@@ -37,8 +51,4 @@ def compute_bag_words_sentence(bag_of_words : List[str], sentence : List[str]) -
     return list(bag_words.values())
 
 
-if __name__ == '__main__':
-    a=["hi","hello","me"]
-    l_doc=["am","hi"]
-    print(compute_bag_words_sentence(a,l_doc))
 
