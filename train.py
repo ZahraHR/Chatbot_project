@@ -81,6 +81,8 @@ def main(args):
     model_data={
         "model_state": model.state_dict(),
         "input_size": input_size,
+        "hidden_size": args.hidden_size,
+        "num_classes": args.num_classes,
         "bag_of_words": bag_of_words
     }
     torch.save(model_data, os.path.join(
